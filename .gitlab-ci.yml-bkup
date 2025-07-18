@@ -1,0 +1,70 @@
+default:
+  tags:
+    - comviva_nodejs_runner
+
+stages:
+  - build
+  - tag
+  - push
+  - deploy
+
+#docker_build:
+#  stage: build
+#  script:
+#    - docker build -t drupal-web .
+#  only:
+#    - main
+
+#docker_tag:
+#  stage: tag
+#  script:
+#   - docker tag drupal-web localhost:5000/drupal-web:latest
+#  only:
+#    - main
+
+#docker_push:
+#  stage: push
+#  script:
+#    - docker push localhost:5000/drupal-web:latest
+#  only:
+#    - main
+
+#docker_deploy:
+#  tags:
+#    - cirunner
+#  stage: deploy
+#  script:
+#    - docker-compose up -d --build
+#  only:
+#    - main
+
+docker_dev_build:
+  stage: build
+  script:
+    - docker build -t nodejs-dev-web .
+  only:
+    - dev
+
+docker_dev_tag:
+  stage: tag
+  script:
+    - docker tag nodejs-dev-web localhost:5000/nodejs-dev-web:latest
+  only:
+    - dev
+
+docker_dev_push:
+  stage: push
+  script:
+    - docker push localhost:5000/nodejs-dev-web:latest
+  only:
+    - dev
+
+docker_deploy:
+#  tags:
+#    - cirunner
+  stage: deploy
+  script:
+    - docker-compose up -d --build
+  only:
+    - dev
+

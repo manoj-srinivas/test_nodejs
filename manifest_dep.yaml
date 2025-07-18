@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-nodejs-v1
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-nodejs-v1  # Match this with the service
+  template:
+    metadata:
+      labels:
+        app: my-nodejs-v1  # Match this with the service
+    spec:  # <-- Missing 'spec' was causing the issue
+      containers:
+        - name: my-nodejs-v1
+          image: cvsmdudxpdemo.azurecr.io/nodejs-v1:5
+          ports:
+            - containerPort: 3000  # Ensure the app is listening on this port
+          env:
+            - name: TITLE
+              value: "Welcome to Azure Kubernetes Service (AKS)"
+

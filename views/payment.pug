@@ -1,0 +1,76 @@
+extends layout
+
+block content
+  if data.req_transaction_type === 'create_payment_token'
+    div.receipt-container
+      div.header
+        img(src=basePath+"views/logo.svg" alt="alt" class="logo")
+      div.body
+        div.content
+          if data.decision === 'ACCEPT'
+            p.check &#9745;
+            h1 Thanks for your order
+            p 
+              | Your order confirmation number is #{data.auth_trans_ref_no}. Please 
+              a(onclick=`printReceipt()`) print
+              |  the receipt for your reference.
+            div.receipt
+              div.info
+                lable
+                  b Confirmation will be sent to
+                div.emailAddress #{data.req_bill_to_email}
+              div.info
+                lable
+                  b Order Summary
+                div.rows
+                  div.column
+                    label #{serviceData.subscriptionPlan.title} Plan - #{serviceData.subscriptionTransaction.maxAdmins} Admins
+                    small Free trial ends #{ serviceData.trialEndDate }
+                  div $#{serviceData.monthlyCost}/month
+                div.rows
+                  div.column
+                    label Tax
+                  div $#{data.req_tax_amount}
+                div.rows
+                  div.column
+                    label
+                      b First Payment
+                    small Due on #{serviceData.subscriptionTransaction.recurringStartDate}
+                  div
+                    b $#{data.req_amount}
+          else
+            p.cancel &#10539;
+            p This card transaction has been declined.
+            p Please press "Back", verify that the entered information is correct and resubmit.
+      div.footer
+        button.disable-print(onclick=`closeWindow()`)
+          if data.decision === 'ACCEPT'
+            span="Login"
+          else
+            span="Back"
+  //-             //- button(onclick=`printReceipt()`)
+  //-     span="Print"
+  //- h1= title
+  //- ul(class="payment-receipt")
+  //-   each val, index in data
+  //-     li
+  //-       lable
+  //-         b=index
+  //-       p=val
+
+block scripts
+  script(type="text/javascript").
+    var paymentData = JSON.parse(`!{JSON.stringify(data)}`);
+    window.onload=update();
+    function update(){
+      if(paymentData.decision === 'CANCEL' || paymentData.req_transaction_type === 'update_payment_token'){
+        window.close();
+      }
+    }
+    function closeWindow(data){
+      window.close();
+    }
+    function printReceipt(data){
+      window.print();
+    }
+

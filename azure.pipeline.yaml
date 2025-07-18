@@ -1,0 +1,72 @@
+trigger:
+  branches:
+    include:
+      - 'master'
+
+pool:
+  name: cvsmdudxp-agent  
+
+stages:
+  - stage: BuildAndPushDockerImage
+    displayName: 'Build and Push Docker Image'
+    condition: contains(variables['Build.SourceVersionMessage'], 'deploy')
+    jobs:
+      - job: BuildAndPushDockerImage
+        steps:
+          - task: Docker@2
+            displayName: 'Build Docker Image'
+            inputs:
+              containerRegistry: 'cvsmdudxpdemo'
+              repository: 'nodebe-nodejs'
+              command: 'build'
+              Dockerfile: 'Dockerfile'
+
+          - task: Docker@2
+            displayName: 'Push Docker Image'
+            inputs:
+              containerRegistry: 'cvsmdudxpdemo'
+              repository: 'nodebe-nodejs'
+              command: 'push'
+
+  - stage: DeployToKubernetes
+    displayName: 'Deploy to Kubernetes'
+    dependsOn: BuildAndPushDockerImage
+    condition: contains(variables['Build.SourceVersionMessage'], 'deploy')
+    jobs:
+      - job: DeployToKubernetes
+        steps:
+          - task: PublishPipelineArtifact@1
+            inputs:
+              targetPath: 'manifest.yaml'
+              artifact: '_CVS_MD_UDXP'
+              publishLocation: 'pipeline'
+
+          - task: KubeloginInstaller@0
+            inputs:
+              kubeloginVersion: 'latest'
+
+          - task: KubectlInstaller@0
+            inputs:
+              kubeloginVersion: 'latest'
+
+          - task: CmdLine@2
+            inputs:
+              script: 'export PATH="${PATH}:/opt/hostedtoolcache/kubectl/1.27.4/x64"'
+
+          - task: Bash@3
+            inputs: 
+              targetType: 'inline'
+              script: 'which kubelogin'
+
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: 'Comviva_CVS_MD'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              addSpnToEnvironment: true
+              inlineScript: |
+                  az aks get-credentials --resource-group CVS_MD_RG --name CVS_MD_UDXP_K8 --file /home/AzDevOps/.kube/config
+                  kubelogin convert-kubeconfig -l azurecli --kubeconfig /home/AzDevOps/.kube/config
+                  kubectl config use-context CVS_MD_UDXP_K8 --kubeconfig /home/AzDevOps/.kube/config
+                  sed -i 's/{deploy_version}/$(Build.BuildId)/g' manifest.yaml 
+                  kubectl apply -f manifest.yaml --kubeconfig /home/AzDevOps/.kube/config

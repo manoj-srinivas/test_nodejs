@@ -1,0 +1,115 @@
+#default:
+#  tags:
+#    - comviva_runner
+
+stages:
+  - build
+  - tag
+  - push
+  - deploy
+
+#docker_build:
+#  stage: build
+#  script:
+#    - docker build -t drupal-web .
+#  only:
+#    - main
+
+#docker_tag:
+#  stage: tag
+#  script:
+#   - docker tag drupal-web localhost:5000/drupal-web:latest
+#  only:
+#    - main
+
+#docker_push:
+#  stage: push
+#  script:
+#    - docker push localhost:5000/drupal-web:latest
+#  only:
+#    - main
+
+#docker_deploy:
+#  tags:
+#    - cirunner
+#  stage: deploy
+#  script:
+#    - docker-compose up -d --build
+#  only:
+#    - main
+
+docker_dev_build:
+  tags:
+    - comviva_nodejs_runner
+  stage: build
+  script:
+    - echo $DEV_IMAGE_NAME
+    - docker build -t $DEV_IMAGE_NAME .
+  only:
+    - dev
+
+docker_dev_tag:
+  tags:
+    - comviva_nodejs_runner
+  stage: tag
+  script:
+    - docker tag $DEV_IMAGE_NAME localhost:5000/$DEV_IMAGE_NAME:latest
+  only:
+    - dev
+
+docker_dev_push:
+  tags:
+    - comviva_nodejs_runner
+  stage: push
+  script:
+    - docker push localhost:5000/$DEV_IMAGE_NAME:latest
+  only:
+    - dev
+
+docker_dev_deploy:
+  tags:
+    - comviva_nodejs_runner
+  stage: deploy
+  script:
+    - docker-compose up -d --build
+  only:
+    - dev
+
+
+docker_uat_build:
+  tags:
+    - comviva_uat_runner_nodejs
+  stage: build
+  script:
+    - echo $UAT_IMAGE_NAME
+    - docker build -t $UAT_IMAGE_NAME .
+  only:
+    - uat
+
+docker_uat_tag:
+  tags:
+    - comviva_uat_runner_nodejs
+  stage: tag
+  script:
+    - docker tag $UAT_IMAGE_NAME localhost:5000/$UAT_IMAGE_NAME:latest
+  only:
+    - uat
+
+docker_uat_push:
+  tags:
+    - comviva_uat_runner_nodejs
+  stage: push
+  script:
+    - docker push localhost:5000/$UAT_IMAGE_NAME:latest
+  only:
+    - uat
+
+docker_uat_deploy:
+  tags:
+    - comviva_uat_runner_nodejs
+  stage: deploy
+  script:
+    - docker-compose up -d --build
+  only:
+    - uat
+

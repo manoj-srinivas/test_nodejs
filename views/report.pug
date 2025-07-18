@@ -1,0 +1,19 @@
+extends layout
+
+block content
+  div.report-block
+    div.content
+      div.emoji
+        img(src='views/assets/oops.svg' alt="alt" class="logo")
+      div.content-body
+        if type === 'pin'
+          p Oops! We have deactivated the PIN. We’ll keep a watch on further sign in attempts.
+        else if type === 'registration'
+          p Oops! We’ll let #{companyName} know.
+        else if type === 'error'
+          p Oops! You have already reported or expired token.
+      div.content-footer
+        img(src='views/assets/bility-logo-tm.png' alt="alt" class="logo")
+        a(href='') Privacy Policy
+        p Copyright © Unimity Solutions Pvt. Ltd.
+

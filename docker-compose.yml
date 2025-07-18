@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  web:
+#    build: .
+    image: localhost:5000/$NODE_IMAGE_NAME:latest 
+    container_name: $NODE_CONTAINER_NAME
+    environment:
+      NODE_DATABASE_HOST: $NODE_DATABASE_HOST
+      NODE_DATABASE_PORT: $NODE_DATABASE_PORT
+      NODE_DATABASE_NAME: $NODE_DATABASE_NAME
+      NODE_DATABASE_USERNAME: $NODE_DATABASE_USERNAME
+      NODE_DATABASE_PASSWORD: $NODE_DATABASE_PASSWORD
+    volumes:
+      - $NODE_HOST_VOLUME:/var/www/comviva_nodejs/uploads
+    ports:
+      - "8443:3000"
+    restart: always
+
+

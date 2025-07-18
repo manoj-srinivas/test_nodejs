@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  web:
+    build: .
+  #  image: geerlingguy/drupal:latest
+    container_name: comviva-nodejs-dev
+    environment:
+      DRUPAL_DATABASE_HOST: 172.25.36.76
+      DRUPAL_DATABASE_PORT: 3306
+      DRUPAL_DATABASE_NAME: comviva_nodejs_dev 
+      DRUPAL_DATABASE_USERNAME: comviva_nodejs_dev
+      DRUPAL_DATABASE_PASSWORD: P@ssw0rd@234
+    volumes:
+      - /var/www/comviva_nodejs:/var/www/comviva_nodejs
+      - /mnt/comviva_nodejsdev_uploads:/var/www/comviva_nodejs/uploads
+    ports:
+      - "3002:3000"
+    restart: always
+
+

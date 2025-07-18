@@ -1,0 +1,49 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# compiled output
+/dist
+/tmp
+/out-tsc
+
+# dependencies
+/node_modules
+
+# System Files
+.DS_Store
+Thumbs.db
+
+## Node related ignores
+# Logs
+logs/*
+# Commits the "log" folder, even if it's empty
+!logs/.gitkeep
+
+# Uploads
+/uploads/**
+!/uploads/**/
+!/uploads/**/.gitkeep
+public/*    
+!public/.gitkeep
+
+# Bower dependency directory (https://bower.io/)
+bower_components
+
+# Dependency directories
+node_modules/
+
+# dotenv environment variables file
+.env
+
+public/*
+# Commits the "log" folder, even if it's empty
+!public/.gitkeep
+
+bkp.env
+src/topUp/service.js
+
+# Ignore all json files
+*.json
+
+# Except package.json
+!package.json
+key/admin-sdk-key.json
